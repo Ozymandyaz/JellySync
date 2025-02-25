@@ -50,7 +50,7 @@ def createConfig(path):
     SourceSection = {
         "SOURCE_APIKEY": "aaaabbbbbbbcccccccccccccdddddddd",
         "SOURCE_URLBASE": "http://127.0.0.1:8096/source/",
-        "IGNORE_USERS":   "User1"
+        "IGNORE_USERS":   "User1,User2"
     }
     config["Source"] = SourceSection
 
@@ -95,7 +95,7 @@ def source(selectedUsers):
     SOURCE_HEADERS = {"accept": "application/json", "api_key": "{0}".format(SOURCE_APIKEY)}
     users = dict()
 
-    def emby_get_users_list(SOURCE_APIKEY, SOURCE_URLBASE, SOURCE_HEADERS):
+    def source_get_users_list(SOURCE_APIKEY, SOURCE_URLBASE, SOURCE_HEADERS):
 
         api_url = "{0}Users?api_key={1}".format(SOURCE_URLBASE, SOURCE_APIKEY)
 
@@ -188,7 +188,7 @@ def source(selectedUsers):
                         )
         print("\n\n\033[92m##### SourceSync Done #####\033[00m\n\n")
 
-    users = emby_get_users_list(SOURCE_APIKEY, SOURCE_URLBASE, SOURCE_HEADERS)
+    users = source_get_users_list(SOURCE_APIKEY, SOURCE_URLBASE, SOURCE_HEADERS)
     if selectedUsers == []:
         ignoreUsers = getConfig(path, "Source", "IGNORE_USERS", "str")
         if ignoreUsers != None:
