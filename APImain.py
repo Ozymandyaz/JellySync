@@ -265,20 +265,22 @@ def destination(newUser_pw):
                 ##creating user account
                 DEST_HEADERS_usercreate = {
                     "accept": "application/json",
+                    "Content-Type": "application/json",
                     "api_key": "{0}".format(DEST_APIKEY),
                 }
 
                 api_url = "{0}Users/New?&api_key={1}".format(
                     DEST_URLBASE, DEST_APIKEY
                 )
+                userData = {
+                        "name": eUser.replace(" ", "_"),
+                        "Password": set_pw(eUser.replace(" ", "_"), newUser_pw),
+                    }
 
                 response = requests.post(
                     api_url,
                     headers=DEST_HEADERS_usercreate,
-                    data={
-                        "name": eUser.replace(" ", "_"),
-                        "Password": set_pw(eUser.replace(" ", "_"), newUser_pw),
-                    },
+                    data=json.dumps(userData),
                 )
                 if response.status_code == 200:
                     print("{0}  Created".format(eUser.replace(" ", "_")))
