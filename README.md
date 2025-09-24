@@ -1,18 +1,11 @@
-# Emby2Jelly
+# JellySync
 
-Python script to recreate users from emby to jellyfin and migrate their watched content for movies and TV shows.
+Python script to recreate users from one Jellyfin insance to another and migrate their watched content for movies and TV shows.
 
-the script work by asking emby what each user's watched list, and then search them on Jellyfin by their ProviderIds (theTvdb, Imdb...)
-if ProviderIds are not available, it try to recognize your media by names (`Les Animaux fantastiques : Les Crimes de Grindelwald`) 
+The script works by comparing the source and destination episodes and movoes based on their their ProviderIds (theTvdb, Imdb...)
+If ProviderIds are not available, it will try to recognize your media by names (`Les Animaux fantastiques : Les Crimes de Grindelwald`) 
 
-***Be sure to have your content identified (It's prefered to refresh missing metadatas on your Library before) ***
-
-
-Tested with Emby server Version : **4.4.0.40**
-and Jellyfin server Version : **10.5.4**
-
-
-!! Be sure to make emby and Jelly search for missing metadata, Even each Tvshow Episode need to have their providerIds identified to be correctly migrated
+***New and old instance MUST be running, pointed at the same set of media and be fully up to date and preferably with the same providers for metadata. 
 
 ---
 ### Requirements
