@@ -19,14 +19,16 @@ time
 getpass
 ```
 ## Configuration
-simply edit settings.ini with your emby and jelly url and api keys
+Simply create or edit settings.ini with your Jellyfin Source and Destination urls and api keys
+For users that you do NOT want to copy, add htem to the IGNORE USERS section
 ```
-[Emby]
-EMBY_APIKEY = aaaabbbbbbbcccccccccccccdddddddd
-EMBY_URLBASE = http://127.0.0.1:8096/
-[Jelly]
-JELLY_APIKEY = eeeeeeeeeeeeeeeffffffffffffffffggggggggg
-JELLY_URLBASE = http://127.0.0.1:8096/ 
+[Source]
+SOURCE_APIKEY = 'aaaaaaaabbbbbbbcccccddddddddwww'
+SOURCE_URLBASE = 'http://192.168.1.100:8096/'
+IGNORE_USERS = 'User2,admin'
+[Destination]
+DEST_APIKEY = 'ccccbbbbeeejjjjssssuuuaaaaiidkkdd'
+DEST_URLBASE = 'http://192.168.1.100:8099/'
 
 # do not forget the trailing slash 
 
@@ -38,34 +40,39 @@ JELLY_URLBASE = http://127.0.0.1:8096/
 ## Using
 ```
 python3 APImain.py 
-Migrate from Emby to Jellyfin (or Jellyfin to Jellyfin)
 Option Argument : (only one file can be used at a time, one run to a file, then one run from a file)
+NOTE: Files have NOT been tested and may not work in this version
+If setting up new usrs on the Destination, you may set a default with new-user-password
 			--tofile [file]     run the script saving viewed statuses to a file instead of sending them to destination server
 			--fromfile [file]       run the script with a file as source server and send viewed statuses to destination server
 			--new-user-pw "change-your-password-9efde123"
 ```
 
 ### users
-the script will get user list from Emby,
+the script will get user list from Source,
 
 ```
-[user@computer Emby2Jelly]$ python3 APImain.py 
-Emby has 1 Users
-TestUser (1 / 1) : aaaabbbbbcccc4555577779999444422
+[user@computer JellySync]$ python3 APImain.py
+no file specified, will run from source server to destination server
+Source has 5 Users
+George (1 / 5) : 95fththh2440a9138013619732e46
+Linda (2 / 5) : c40c4b3ff833453c881efe20544f8a3
+Mary (3 / 5) : e4efeefefef450cb12b017de01ba9c3
+John (4 / 5) : de02ac2a8ththhhfb72284e1f6a565
 
 ```
 
-### Emby part
+### Source Process
 then very rapidly, it will get the viewed contend for all users from emby
 
-`##### EmbySync Done #####
+`##### SourceSync Done #####
 `
 
-### Jelly part
-the script will work user by user (create them on Jelly if they don't already exist),
-asking Jelly for their viewable content 
+### Destination Process
+The script will work user by user (and create them on the Destination if they don't already exist)
+Then it will query the destination for their viewable content 
 
-**When creating users, the script will ask you for password and confirmation.**
+**When creating users, the script will use --new-user-pw if specified OR ask you for password and confirmation.**
 ```
 TestUser ..  Creating
 you will now enter password for user TestUser
@@ -73,11 +80,25 @@ Password :
 confirm   : 
 TestUser  Created
 ```
+**For existing users (i.e. already created on the destination) you must specify the password
+Passwords MAY be blank, but you will get a warning
+Password MUST match what is IN the destination
+
+```
+Destination has 5 Users
+Destination already knows John (Id acebf5b7fd4cghbvcfg97b5f3a898d4)
+
+Enter password for user John
+Password :
+confirm   : 
+Warning ! Password is set to empty !
 
 
+```
 
-Identify your media and tell to jelly the user already seen it
 
+For each library item on the Source, the script will look for a matching title on Destination
+If a match is found, the full UserItems/UserData section will be updated to match the source. 
 
 working by name when there is no ProviderId
 
@@ -128,7 +149,7 @@ OK ! 17/17 - Alabama Monroe has been seen by TestUser
 
 The script will generate a RESULTS.txt with summary for each user and a list of the media not found : 
 ```
-                      ### Emby2Jelly ###
+                      ### JellySync ###
 
 
 TestUser Created on Jelly
