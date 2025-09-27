@@ -21,6 +21,7 @@ import sys, getopt
 import getpass
 
 destinationUserDb = {}
+destinationUserPw = {}
 
 
 def getConfig(path, section, option, type):
@@ -50,7 +51,7 @@ def createConfig(path):
     SourceSection = {
         "SOURCE_APIKEY": "aaaabbbbbbbcccccccccccccdddddddd",
         "SOURCE_URLBASE": "http://127.0.0.1:8096/source/",
-        "IGNORE_USERS":   "User1,User2"
+        "IGNORE_USERS":   "User1"
     }
     config["Source"] = SourceSection
 
@@ -78,14 +79,14 @@ def getTokenForUser(server_url, username, password):
 
 
 def source(selectedUsers):
-    global MigrationData
+    # global MigrationData
     global SOURCE_APIKEY
     global SOURCE_URLBASE
     if SOURCE_APIKEY == None or SOURCE_URLBASE == None:
         if not exist(path):
             createConfig(path)
             print(
-                "No config:\nif you are in docker, update your env. variables\nif not please see the README and complete the settings.ini\n thank you"
+                "No config:\nif you are in docker, update your env. variables\nif not please see the README and complete the jellysync.ini\n thank you"
             )
             sys.exit()
         SOURCE_APIKEY = getConfig(path, "Source", "SOURCE_APIKEY", "str")
@@ -95,7 +96,7 @@ def source(selectedUsers):
     SOURCE_HEADERS = {"accept": "application/json", "api_key": "{0}".format(SOURCE_APIKEY)}
     users = dict()
 
-    def source_get_users_list(SOURCE_APIKEY, SOURCE_URLBASE, SOURCE_HEADERS):
+    def emby_get_users_list(SOURCE_APIKEY, SOURCE_URLBASE, SOURCE_HEADERS):
 
         api_url = "{0}Users?api_key={1}".format(SOURCE_URLBASE, SOURCE_APIKEY)
 
@@ -107,7 +108,7 @@ def source(selectedUsers):
             return "error : " + json.loads(response.content.decode("utf-8"))
 
     def get_watched_status():
-        global MigrationData
+        # global MigrationData
         # lister les utilsateurs et leur ID respectives
         i = 0
         userCount = 0
@@ -188,7 +189,7 @@ def source(selectedUsers):
                         )
         print("\n\n\033[92m##### SourceSync Done #####\033[00m\n\n")
 
-    users = source_get_users_list(SOURCE_APIKEY, SOURCE_URLBASE, SOURCE_HEADERS)
+    users = emby_get_users_list(SOURCE_APIKEY, SOURCE_URLBASE, SOURCE_HEADERS)
     if selectedUsers == []:
         ignoreUsers = getConfig(path, "Source", "IGNORE_USERS", "str")
         if ignoreUsers != None:
@@ -211,7 +212,7 @@ def destination(newUser_pw):
         if not exist(path):
             createConfig(path)
             print(
-                "No config:\nif you are in docker, update your env. variables\nif not please see the README and complete the settings.ini\n thank you"
+                "No config:\nif you are in docker, update your env. variables\nif not please see the README and complete the jellysync.ini\n thank you"
             )
             sys.exit()
         DEST_APIKEY = getConfig(path, "Destination", "DEST_APIKEY", "str")
@@ -260,6 +261,7 @@ def destination(newUser_pw):
                 report["users"] += "{0} (Source) is  {1} (Destination)\n".format(
                     eUser, eUser.replace(" ", "_")
                 )
+                destinationUserPw[eUser.replace(" ", "_")] = set_pw(eUser.replace(" ", "_"), None)
             else:
                 print("{0} ..  Creating".format(eUser))
                 ##creating user account
@@ -287,6 +289,7 @@ def destination(newUser_pw):
                     report["users"] += "{0} Created on Destination".format(
                         eUser, eUser.replace(" ", "_")
                     )
+                    destinationUserPw[eUser.replace(" ", "_")] = newUser_pw
 
                 else:
                     print(
@@ -336,7 +339,7 @@ def destination(newUser_pw):
                     user["Name"].replace("_", " ")
                 ]:
                     if MigrationMedia["DestinationId"] is not None:
-                        authToken = getTokenForUser(DEST_URLBASE, user["Name"], "")
+                        authToken = getTokenForUser(DEST_URLBASE, user["Name"], destinationUserPw[user["Name"].replace("_", " ") ])
                         DEST_HEADERS_movie = {
                             "Content-Type": "application/json",
                             "Accepts": "application/json",
@@ -400,6 +403,8 @@ def destination(newUser_pw):
     def iterateMigrationData():
         Library = {}
         nonlocal MigrationDataFinal
+        # for u in selectedUsers:
+        #     print(u)
         for user in destinationUsers:
             if user["Name"].replace("_", " ") in selectedUsers:
                 MigrationDataFinal[user["Name"].replace("_", " ")] = []
@@ -440,11 +445,11 @@ def destination(newUser_pw):
             outfile.write("".join(reportStr))
             outfile.close()
 
-    def set_pw(u, newUser_pw):
+    def set_pw(u, pw):
         p1 = "p1"
         p2 = "p2"
-        if newUser_pw is not None:
-            return newUser_pw
+        if pw is not None:
+            return pw
         while 1:
             print("\nEnter password for user {0}".format(u))
             p1 = getpass.getpass(prompt="Password : ")
@@ -472,7 +477,7 @@ def destination(newUser_pw):
 
 
 if __name__ == "__main__":
-    path = "settings.ini"
+    path = "jellysync.ini"
 
     global MigrationData
     global SOURCE_APIKEY
@@ -537,7 +542,9 @@ if __name__ == "__main__":
         try:
             MigrationFile = open(fromfile, "r")
             MigrationData = json.loads(MigrationFile.read())
-            # print(MigrationData)
+            for user in MigrationData:
+                selectedUsers.append(user)
+                # print("Adding Selected User: {0}".format(user))
         except:
             print("cannot open file {0}".format(tofile))
             sys.exit(1)

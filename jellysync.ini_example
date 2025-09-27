@@ -1,0 +1,7 @@
+[Source]
+SOURCE_APIKEY = 'aaaabbbbbbbcccccccccccccdddddddd'
+SOURCE_URLBASE = 'http://192.168.1.100:8096/'
+IGNORE_USERS = 'admin,User2'
+[Destination]
+DEST_APIKEY = 'eeeeeeeeeefffffffffffffffggggggg'
+DEST_URLBASE = 'http://192.168.1.100:8099/'
