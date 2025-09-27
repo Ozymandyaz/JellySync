@@ -1,10 +1,11 @@
 # JellySync
+Foreked from https://github.com/Marc-Vieg/Emby2Jelly and all credit to Marc-Vieg.
+This version is Jellyfin ONLY and renamed to JellySync. 
+Its has been modified to include wacthed progress and works with modern Jellyfin versions (i.e. 10.10.7)
 
 Python script to recreate users from one Jellyfin insance to another and migrate their watched content for movies and TV shows.
 
 Can also be used to create or read from a backup file of watched status of every library item in a JSON file.
-
-The script will also create any missing users on the destination. 
 
 The script works by comparing the source and destination episodes and movies based on their their ProviderIds (theTvdb, Imdb...)
 If ProviderIds are not available, it will try to recognize your media by names (`Les Animaux fantastiques : Les Crimes de Grindelwald`) 
