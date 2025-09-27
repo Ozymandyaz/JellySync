@@ -2,7 +2,11 @@
 
 Python script to recreate users from one Jellyfin insance to another and migrate their watched content for movies and TV shows.
 
-The script works by comparing the source and destination episodes and movoes based on their their ProviderIds (theTvdb, Imdb...)
+Can also be used to create or read from a backup file of watched status of every library item in a JSON file.
+
+The script will also create any missing users on the destination. 
+
+The script works by comparing the source and destination episodes and movies based on their their ProviderIds (theTvdb, Imdb...)
 If ProviderIds are not available, it will try to recognize your media by names (`Les Animaux fantastiques : Les Crimes de Grindelwald`) 
 
 ***New and old instance MUST be running, pointed at the same set of media and be fully up to date and preferably with the same providers for metadata. 
@@ -19,7 +23,7 @@ time
 getpass
 ```
 ## Configuration
-Simply create or edit settings.ini with your Jellyfin Source and Destination urls and api keys
+Simply create or edit jellysync.ini with your Jellyfin Source and Destination urls and api keys
 For users that you do NOT want to copy, add htem to the IGNORE USERS section
 ```
 [Source]
@@ -30,29 +34,28 @@ IGNORE_USERS = 'User2,admin'
 DEST_APIKEY = 'ccccbbbbeeejjjjssssuuuaaaaiidkkdd'
 DEST_URLBASE = 'http://192.168.1.100:8099/'
 
-# do not forget the trailing slash 
+# Do not forget the trailing slash 
 
-## if you have a custom path, or a reverse proxy, do not forget /emby/ or /jelly/ 
+## If you have a custom path, or a reverse proxy, do not forget /jellyfin/ 
 ```
 
 ---
 
 ## Using
 ```
-python3 APImain.py 
+python3 jellysync.py 
 Option Argument : (only one file can be used at a time, one run to a file, then one run from a file)
-NOTE: Files have NOT been tested and may not work in this version
 If setting up new usrs on the Destination, you may set a default with new-user-password
 			--tofile [file]     run the script saving viewed statuses to a file instead of sending them to destination server
 			--fromfile [file]       run the script with a file as source server and send viewed statuses to destination server
 			--new-user-pw "change-your-password-9efde123"
 ```
 
-### users
-the script will get user list from Source,
+### Users
+the script will get user list from Source:
 
 ```
-[user@computer JellySync]$ python3 APImain.py
+[user@computer JellySync]$ python3 jellysync.py
 no file specified, will run from source server to destination server
 Source has 5 Users
 George (1 / 5) : 95fththh2440a9138013619732e46
@@ -69,7 +72,7 @@ then very rapidly, it will get the viewed contend for all users from emby
 `
 
 ### Destination Process
-The script will work user by user (and create them on the Destination if they don't already exist)
+The script will work user by user and create them on the Destination if they don't already exist.
 Then it will query the destination for their viewable content 
 
 **When creating users, the script will use --new-user-pw if specified OR ask you for password and confirmation.**
@@ -80,9 +83,9 @@ Password :
 confirm   : 
 TestUser  Created
 ```
-**For existing users (i.e. already created on the destination) you must specify the password
-Passwords MAY be blank, but you will get a warning
-Password MUST match what is IN the destination
+**For existing users (i.e. already created on the destination) you must specify the password already set
+Passwords MAY be blank, but you will get a warning.
+Password MUST match what is IN the destination for an exiting user. 
 
 ```
 Destination has 5 Users
@@ -97,10 +100,9 @@ Warning ! Password is set to empty !
 ```
 
 
-For each library item on the Source, the script will look for a matching title on Destination
+For each library item on the Source, the script will look for a matching title on Destination.
 If a match is found, the full UserItems/UserData section will be updated to match the source. 
 
-working by name when there is no ProviderId
 
 
 ```
@@ -116,33 +118,7 @@ OK ! 2/17 - Night Mission: Stealing Friends Back has been seen by TestUser
 
 OK ! 3/17 - 102 - The Quail Hunt has been seen by TestUser
 
-OK ! 4/17 - Zombie Island... In Space has been seen by TestUser
-
-OK ! 5/17 - An American Story has been seen by TestUser
-
-OK ! 6/17 - Babysitting Unibaby has been seen by TestUser
-
-OK ! 7/17 - Birthday Month has been seen by TestUser
-
-OK ! 8/17 - The Rabbit Who Broke All the Rules has been seen by TestUser
-
-OK ! 9/17 - No More Bad Guys has been seen by TestUser
-
-OK ! 10/17 - Super Axe has been seen by TestUser
-
-OK ! 11/17 - When Night Creatures Attack has been seen by TestUser
-
-OK ! 12/17 - 28 Days Before has been seen by TestUser
-
-OK ! 13/17 - Taxi Cop has been seen by TestUser
-
-OK ! 14/17 - The Dumb List has been seen by TestUser
-
-OK ! 15/17 - 2 Guns has been seen by TestUser
-
-OK ! 16/17 - 2001 : l'odyssée de l'espace has been seen by TestUser
-
-OK ! 17/17 - Alabama Monroe has been seen by TestUser
+...
 
 ```
 ## Result
@@ -162,18 +138,14 @@ Unfortunately, I Missed 1 Medias :
 ```
 
 ### Timing
-just start the script, sip a beer and i'll be done
+just start the script, sip a beer and it'll get done
 example with a decent user (2986 media seen)
 
 ```
-$time python3 APImain.py
+$time python3 jellysync.py
 real	5m22,223s
 user	0m43,433s
 sys	0m1,485s
 ```
 
-
-# CONTRIBUTE
-
-Feel free to contribute however you want, I will be a pleasure !
 
