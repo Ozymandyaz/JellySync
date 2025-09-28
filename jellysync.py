@@ -19,6 +19,7 @@ import os
 import time
 import sys, getopt
 import getpass
+import argparse
 
 destinationUserDb = {}
 destinationUserPw = {}
@@ -492,37 +493,16 @@ if __name__ == "__main__":
     fromfile = None
     newUser_pw = None
     MigrationFile = None
-    try:
-        opts, args = getopt.getopt(argv, "", ["tofile=", "fromfile=", "new-user-pw="])
-    except getopt.GetoptError:
-        print(
-            "python3 APImain.py\n\nMigrate from Source to Destinationfin (or Destinationfin to Destinationfin)\n"
-        )
-        print(
-            "--tofile [file]     run the script saving viewed statuses to a file instead of sending them to destination server"
-        )
-        print(
-            "--fromfile [file]       run the script with a file as source server and send viewed statuses to destination server"
-        )
-        sys.exit(2)
-    for opt, arg in opts:
-        if opt == "-h":
-            print(
-                "python3 APImain.py\n\nMigrate from Source to Destinationfin (or Destinationfin to Destinationfin)\n"
-            )
-            print(
-                "--tofile [file]     run the script saving viewed statuses to a file instead of sending them to destination server"
-            )
-            print(
-                "--fromfile [file]       run the script with a file as source server and send viewed statuses to destination server"
-            )
-            sys.exit()
-        elif opt == "--tofile":
-            tofile = arg
-        elif opt == "--fromfile":
-            fromfile = arg
-        elif opt == "--new-user-pw":
-            newUser_pw = arg
+
+    parser = argparse.ArgumentParser(prog='JellySync', usage='%(prog)s [options]')
+    parser.add_argument('--tofile', help='run the script saving viewed statuses to a file instead of sending them to destination server')
+    parser.add_argument('--fromfile', help='run the script with a file as source server and send viewed statuses to destination server')
+    parser.add_argument('--pw', action='store_const', const='', help='set default password for new or existing users')
+    # parser.print_help()
+    args = parser.parse_args()
+    tofile = args.tofile
+    fromfile = args.fromfile
+    newUser_pw = args.pw
 
     SOURCE_APIKEY = os.getenv("SOURCE_APIKEY")
     SOURCE_URLBASE = os.getenv("SOURCE_URLBASE")
