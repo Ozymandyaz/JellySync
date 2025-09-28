@@ -22,6 +22,7 @@ urllib.parse
 configobj
 time
 getpass
+argparse
 ```
 ## Configuration
 Simply create or edit jellysync.ini with your Jellyfin Source and Destination urls and api keys

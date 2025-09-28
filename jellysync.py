@@ -17,7 +17,7 @@ import urllib.parse
 from configobj import ConfigObj
 import os
 import time
-import sys, getopt
+import sys
 import getpass
 import argparse
 
