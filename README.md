@@ -47,9 +47,9 @@ DEST_URLBASE = 'http://192.168.1.100:8099/'
 python3 jellysync.py 
 Option Argument : (only one file can be used at a time, one run to a file, then one run from a file)
 If setting up new usrs on the Destination, you may set a default with new-user-password
-			--tofile [file]     run the script saving viewed statuses to a file instead of sending them to destination server
+			--tofile [file]     	run the script saving viewed statuses to a file instead of sending them to destination server
 			--fromfile [file]       run the script with a file as source server and send viewed statuses to destination server
-			--new-user-pw "change-your-password-9efde123"
+			--pw [password]			define a password for newly created users
 ```
 
 ### Users
@@ -67,7 +67,7 @@ John (4 / 5) : de02ac2a8ththhhfb72284e1f6a565
 ```
 
 ### Source Process
-then very rapidly, it will get the viewed contend for all users from emby
+then very rapidly, it will get the viewed contend for all users from the Source
 
 `##### SourceSync Done #####
 `
@@ -76,7 +76,7 @@ then very rapidly, it will get the viewed contend for all users from emby
 The script will work user by user and create them on the Destination if they don't already exist.
 Then it will query the destination for their viewable content 
 
-**When creating users, the script will use --new-user-pw if specified OR ask you for password and confirmation.**
+**When creating users, the script will use --pw if specified OR ask you for password and confirmation.**
 ```
 TestUser ..  Creating
 you will now enter password for user TestUser
